@@ -1,0 +1,20 @@
+[package]
+name = "audiobuffer"
+version = "0.1.0"
+edition = "2021"
+authors = ["Rosa Kamp <rosa@expressivelabs.net>"]
+description = "A simple Rust library to provide basic audio buffer functionality."
+license = "MIT"
+repository = "https://github.com/expressivelabs/audiobuffer"
+readme = "README.md"
+keywords = ["audio", "buffer", "dsp", "signal processing"]
+
+[dependencies]
+anyhow = "1.0.97"
+log = "0.4.26"
+num-traits = "0.2.19"
+rubato = {version = "0.16.1", optional = true}
+
+[features]
+default = ["resample"]
+resample = ["rubato"]
