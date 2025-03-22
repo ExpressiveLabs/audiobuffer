@@ -7,7 +7,7 @@ description = "A simple Rust library to provide basic audio buffer functionality
 license = "MIT"
 repository = "https://github.com/expressivelabs/audiobuffer"
 readme = "README.md"
-keywords = ["audio", "buffer", "dsp", "signal processing"]
+keywords = ["audio", "buffer", "dsp", "signal-processing"]
 
 [dependencies]
 anyhow = "1.0.97"
