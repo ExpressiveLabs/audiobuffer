@@ -1,6 +1,12 @@
 # `audiobuffer`
 A simple audio buffer library written in Rust. The syntax is vaguely inspired by JUCE's audio buffer. This library is used in all Mikoto platform products developed by ExpressiveLabs.
 
+## Installation
+This library is available on [crates.io](https://crates.io/crates/audiobuffer). To install it:
+```
+cargo add audiobuffer
+```
+
 ## How to use
 ```rust
     // Create an empty buffer
