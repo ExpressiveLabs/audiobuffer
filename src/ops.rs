@@ -217,7 +217,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_add_buffers() {
+    fn test_ops() {
         let mut buf1 = AudioBuffer::new_with_size(2, 3);
         buf1.data[0] = vec![1.0, 2.0, 3.0];
         buf1.data[1] = vec![4.0, 5.0, 6.0];
