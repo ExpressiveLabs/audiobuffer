@@ -1,7 +1,11 @@
 pub mod view;
+pub mod ops;
 
 #[cfg(feature = "resample")]
 pub mod resample;
+
+#[allow(unused)]
+pub use ops::*;
 
 use num_traits::Float;
 use anyhow::{bail, Result};
