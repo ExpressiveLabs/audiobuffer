@@ -1,6 +1,6 @@
 [package]
 name = "audiobuffer"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2021"
 authors = ["layetri <rosa@expressivelabs.net>"]
 description = "A simple Rust library to provide basic audio buffer functionality."
