@@ -4,19 +4,23 @@ pub mod ops;
 #[cfg(feature = "resample")]
 pub mod resample;
 
+use abi_stable::{StableAbi, rvec, std_types::RVec};
+
 #[allow(unused)]
 pub use ops::*;
 
 use num_traits::Float;
 use anyhow::{bail, Result};
 
-#[derive(Default, Debug, Clone)]
-pub struct AudioBuffer<T> {
-    pub data: Vec<Vec<T>>,
+#[derive(Default, Debug, Clone, StableAbi)]
+#[repr(C)]
+/// flutter_rust_bridge:ignore
+pub struct AudioBuffer<T: Float + Clone + StableAbi> {
+    pub data: RVec<RVec<T>>,
     pub sample_rate: f32,
 }
 
-impl<T> AudioBuffer<T> where T: Float + Clone + std::ops::AddAssign<T> {
+impl<T> AudioBuffer<T> where T: Float + Clone + std::ops::AddAssign<T> + StableAbi {
     pub fn add_sample(&mut self, channel: usize, index: usize, value: T) -> Result<()> {
         if channel >= self.data.len() {
             log::error!("[libmikoto::AudioBuffer::add_sample] Channel index out of bounds");
@@ -31,7 +35,7 @@ impl<T> AudioBuffer<T> where T: Float + Clone + std::ops::AddAssign<T> {
     }
 
     pub fn merge_channels(&mut self) {
-        let mut new_data = Vec::new();
+        let mut new_data = RVec::new();
         let div = T::from(self.get_num_channels()).unwrap();
 
         for i in 0..self.get_num_samples() {
@@ -42,29 +46,29 @@ impl<T> AudioBuffer<T> where T: Float + Clone + std::ops::AddAssign<T> {
             new_data.push(sample);
         }
 
-        self.data = vec![new_data];
+        self.data = rvec![new_data];
     }
 }
 
-impl<T: Float + Clone> AudioBuffer<T> {
+impl<T: Float + Clone + StableAbi> AudioBuffer<T> {
     pub fn new() -> Self {
-        Self { data: Vec::new(), sample_rate: 44100.0 }
+        Self { data: RVec::new(), sample_rate: 44100.0 }
     }
     pub fn new_with_sample_rate(sample_rate: f32) -> Self {
-        Self { data: Vec::new(), sample_rate }
+        Self { data: RVec::new(), sample_rate }
     }
     pub fn new_with_properties(channels: usize, length: usize, sample_rate: f32) -> Self {
-        let mut data = Vec::new();
+        let mut data = RVec::new();
         for _i in 0..channels {
-            data.push(vec![T::zero(); length]);
+            data.push(rvec![T::zero(); length]);
         }
         Self { data, sample_rate }
     }
 
     pub fn new_with_size(channels: usize, length: usize) -> Self {
-        let mut data = Vec::new();
+        let mut data = RVec::new();
         for _i in 0..channels {
-            data.push(vec![T::zero(); length]);
+            data.push(rvec![T::zero(); length]);
         }
         Self { data, sample_rate: 44100.0 }
     }
@@ -74,12 +78,12 @@ impl<T: Float + Clone> AudioBuffer<T> {
             self.data.clear();
 
             for _i in 0..channels {
-                self.data.push(vec![T::zero(); length]);
+                self.data.push(rvec![T::zero(); length]);
             }
         } else {
             for i in 0..channels {
                 if i >= self.data.len() {
-                    self.data.push(vec![T::zero(); length]);
+                    self.data.push(rvec![T::zero(); length]);
                 } else {
                     self.data[i].resize(length, T::zero());
                 }
@@ -146,7 +150,7 @@ impl<T: Float + Clone> AudioBuffer<T> {
         }
     }
 
-    pub fn copy_from_with_typecast<U: Float + Clone>(&mut self, source: &AudioBuffer<U>, source_start: usize, dest_start: usize, length: usize) -> Result<()> {
+    pub fn copy_from_with_typecast<U: Float + Clone + StableAbi>(&mut self, source: &AudioBuffer<U>, source_start: usize, dest_start: usize, length: usize) -> Result<()> {
         if source.get_num_channels() != self.get_num_channels() {
             log::error!("[libmikoto::AudioBuffer::copy_from_with_typecast] Channel count mismatch");
             bail!("Channel count mismatch");
@@ -193,7 +197,7 @@ impl<T: Float + Clone> AudioBuffer<T> {
 }
 
 #[cfg(feature = "resample")]
-impl<T: Float + Clone + rubato::Sample> AudioBuffer<T> {
+impl<T: Float + Clone + rubato::Sample + StableAbi> AudioBuffer<T> {
     pub fn set_sample_rate(&mut self, sample_rate: f32, resample: bool) -> Result<()> {
         if self.sample_rate == sample_rate {
             return Ok(());
