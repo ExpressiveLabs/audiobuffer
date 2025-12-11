@@ -13,6 +13,7 @@ use num_traits::Float;
 use anyhow::{bail, Result};
 
 #[derive(Default, Debug, Clone, StableAbi)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(C)]
 /// flutter_rust_bridge:ignore
 pub struct AudioBuffer<T: Float + Clone + StableAbi> {

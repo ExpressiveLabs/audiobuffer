@@ -15,7 +15,9 @@ anyhow = "1.0.97"
 log = "0.4.26"
 num-traits = "0.2.19"
 rubato = {version = "0.16.1", optional = true}
+serde = { version = "1.0.228", optional = true }
 
 [features]
 default = ["resample"]
 resample = ["rubato"]
+serde = ["dep:serde"]
